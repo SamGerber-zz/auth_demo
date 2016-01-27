@@ -1,7 +1,11 @@
 class SessionsController < ApplicationController
   # Signs a user in
   def create
-    @user = User.find_by(username: params[:user][:username])
+    @user = User.find_by_credentials(
+      username: params[:user][:username],
+      password: params[:user][:password]
+    )
+
     if @user.blank?
       render :new
     else
