@@ -6,17 +6,20 @@ class ApplicationController < ActionController::Base
 
   # Fetches the user we are logged in as
   def current_user
-    return nil if session[:user_id].nil?
-    User.find(session[:user_id])
+    return nil if session[:session_token].nil?
+    User.find_by(session_token: session[:session_token])
   end
 
   # Log a user out
   def log_in!(user)
-    session[:user_id] = user.id
+    # force other clients to log out by regenerating the token
+    user.reset_session_token!
+    # log this client in
+    session[:session_token] = user.session_token
   end
 
   # Log a user out
   def log_out!
-    session[:user_id] = nil
+    session[:session_token] = nil
   end
 end
