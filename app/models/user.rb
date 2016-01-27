@@ -1,8 +1,12 @@
+require 'digest/sha2'
+
 class User < ActiveRecord::Base
   attr_reader :password
 
-  validates :username, :password_digest, presence: true
-  validates :password, length: { minimum: 6, allow_nil: true } 
+  validates :username, :password_digest, :session_token, presence: true
+  validates :password, length: { minimum: 6, allow_nil: true }
+
+  before_validation :ensure_session_token
 
   def password=(password)
     @password = password
@@ -14,5 +18,14 @@ class User < ActiveRecord::Base
     return nil if user.blank?
     password_digest = Digest::SHA2.hexdigest(password)
     user.password_digest == password_digest ? user : nil
+  end
+
+  def ensure_session_token
+    self.session_token ||= SecureRandom::urlsafe_base64
+  end
+
+  def reset_session_token!
+    self.session_token = SecureRandom::urlsafe_base64
+    self.save!
   end
 end
