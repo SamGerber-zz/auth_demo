@@ -1,2 +1,7 @@
 <h1><%= @user.username %></h1>
 Hello <%= @user.username %>
+<br>
+<form action="<%=session_url%>" method="post">
+  <input type="hidden" name="_method" value="DELETE">
+  <input type="submit" value="Log Out!">
+</form>
