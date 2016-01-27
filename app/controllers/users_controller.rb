@@ -29,10 +29,7 @@ class UsersController < ApplicationController
   protected
 
   def user_params
-    password_digest = Digest::SHA2.hexdigest(params[:user][:password])
-
-    { username: params[:user][:username],
-      password_digest: password_digest }
+    self.params.require(:user).permit(:username, :password)
   end
 
 end
