@@ -3,7 +3,7 @@ require 'digest/sha2'
 class User < ActiveRecord::Base
   attr_reader :password
 
-  validates :username, :password_digest, :session_token, :salt, presence: true
+  validates :username, :password_digest, :session_token, presence: true
   validates :password, length: { minimum: 6, allow_nil: true }
 
   before_validation :ensure_session_token
