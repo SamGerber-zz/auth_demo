@@ -10,14 +10,13 @@ class User < ActiveRecord::Base
 
   def password=(password)
     @password = password
-    self.password_digest = Digest::SHA2.hexdigest(salt + password)
+    self.password_digest = BCrypt::Password.create(password))
   end
 
   def self.find_by_credentials(username:, password:)
     user = find_by(username: username)
     return nil if user.blank?
-    password_digest = Digest::SHA2.hexdigest(user.salt + password)
-    user.password_digest == password_digest ? user : nil
+    user.password_digest.is_password?(password) ? user : nil
   end
 
   def ensure_session_token
@@ -29,7 +28,7 @@ class User < ActiveRecord::Base
     self.save!
   end
 
-  def salt
-    self.salt =  super || SecureRandom::urlsafe_base64
+  def password_digest
+    BCrypt::Password.new(super)
   end
 end
